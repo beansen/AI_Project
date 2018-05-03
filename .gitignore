@@ -47,3 +47,6 @@ Windows generated
 .idea/
 
 *.app
+
+Unity/*.csproj
+

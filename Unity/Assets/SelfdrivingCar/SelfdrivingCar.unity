@@ -356,6 +356,7 @@ MonoBehaviour:
   population: 14
   bias: -0.39
   activationFunction: 3
+  config: {fileID: 11400000, guid: 0bfc1e4e85de1495a8b4ea7d9fc0e1e2, type: 2}
 --- !u!4 &116966005
 Transform:
   m_ObjectHideFlags: 0
