@@ -7,6 +7,7 @@ public class NpcManager : MonoBehaviour
 
 	public Transform[] spawnPoints;
 	public GameObject[] npcPrefabs;
+	public Transform[] waypoints;
 	
 	private float timer = 15f;
 	private const int npcSpawnTime = 30;
@@ -40,6 +41,8 @@ public class NpcManager : MonoBehaviour
 
 			float zAxis = 1.5f;
 			
+			NpcGroup group = new NpcGroup(direction == 1 ? 0 : waypoints.Length - 1, direction);
+
 			for (int j = 0; j < 5; j++)
 			{
 				Vector3 spawnPos = spawnPoints[i].position;
@@ -53,6 +56,8 @@ public class NpcManager : MonoBehaviour
 					zAxis -= 1.5f;
 					if (j == 2)
 						zAxis = 1;
+
+					group.AddNpc(new MeleeNpcBehaviour(npc));
 				}
 				else
 				{
@@ -72,6 +77,13 @@ public class NpcManager : MonoBehaviour
 		private int currentWaypoint;
 		private int waypointModifier;
 
+		public int CurrentWaypoint {
+			get
+			{
+				return currentWaypoint;
+			}
+		}
+
 		public NpcGroup(int currentWaypoint, int waypointModifier)
 		{
 			this.currentWaypoint = currentWaypoint;
@@ -84,9 +96,17 @@ public class NpcManager : MonoBehaviour
 			npcList.Add(npc);
 		}
 
+		public void StopNavigation() {
+			for (int i = 0; i < npcList.Count; i++) {
+				npcList[i].Stop();
+			}
+		}
+
 		public void SetNextWaypoint(Vector3 pos)
 		{
-			
+			for (int i = 0; i < npcList.Count; i++) {
+				npcList[i].Move(pos);
+			}
 		}
 	}
 }

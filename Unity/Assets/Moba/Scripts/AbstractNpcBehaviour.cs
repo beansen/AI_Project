@@ -34,4 +34,12 @@ public abstract class AbstractNpcBehaviour
 	{
 		timer = 0;
 	}
+
+	public void Stop() {
+		navAgent.ResetPath();
+	}
+
+	public void Move(Vector3 pos) {
+		navAgent.SetDestination(pos);
+	}
 }
