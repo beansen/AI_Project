@@ -7,7 +7,7 @@ namespace AI.NeuralNetwork
 	{
 		private float[] neurons;
 
-		private float[,] weights;
+		private float[] weights;
 
 		private float bias;
 
@@ -18,7 +18,7 @@ namespace AI.NeuralNetwork
 			get { return neurons; }
 		}
 
-		public float[,] Weights
+		public float[] Weights
 		{
 			get { return weights; }
 			set { weights = value; }
@@ -32,21 +32,25 @@ namespace AI.NeuralNetwork
 
 		public void ProcessInput(float[] input)
 		{
-			for (int y = 0; y < weights.GetLength(1); y++)
+			for (int i = 0; i < input.Length; i++)
 			{
-				float inputValue = y != 0 ? input[y - 1] : bias;
-			
-				for (int x = 0; x < weights.GetLength(0); x++)
+				for (int j = 0; j < neurons.Length; j++)
 				{
-					float weight = weights[x, y];
-
-					neurons[x] += inputValue * weight;
-				
-					if (y == weights.GetLength(1) - 1)
+					if (i == 0)
 					{
-						neurons[x] = ActivationFunction(neurons[x]);
+						neurons[j] = weights[j] * input[i];
+					}
+					else
+					{
+						neurons[j] += weights[i * neurons.Length + j] * input[i];
 					}
 				}
+			}
+			
+			for (int i = 0; i < neurons.Length; i++)
+			{
+				neurons[i] += bias * weights[weights.Length - 1];
+				neurons[i] = ActivationFunction(neurons[i]);
 			}
 		}
 
@@ -54,17 +58,14 @@ namespace AI.NeuralNetwork
 		{
 			neurons = input;
 		}
-
+ 
 		public void SetRandomWeights(uint inputLayer, float minWeight, float maxWeight)
 		{
-			weights = new float[neurons.Length, inputLayer + 1];
+			weights = new float[inputLayer * neurons.Length + 1];
 		
-			for (int y = 0; y < weights.GetLength(1); y++)
+			for (int i = 0; i < weights.Length; i++)
 			{
-				for (int x = 0; x < weights.GetLength(0); x++)
-				{
-					weights[x, y] = Random.Range(minWeight, maxWeight);
-				}
+				weights[i] = Random.Range(minWeight, maxWeight);
 			}
 		}
 

@@ -1,4 +1,6 @@
-﻿using AI.Evolution;
+﻿using System;
+using System.IO;
+using AI.Evolution;
 using UnityEngine;
 
 public class CarController : MonoBehaviour
@@ -17,8 +19,6 @@ public class CarController : MonoBehaviour
 	private Ray[] sensorRays;
 	
 	private float[] input = new float[3];
-
-	private float timer;
 
 	private Vector3 startingPosition;
 
@@ -39,15 +39,13 @@ public class CarController : MonoBehaviour
 
 		startingPosition = transform.position;
 		lastPosition = transform.position;
+		
 		uiController.UpdateNetworkText(evolutionManager.CurrenGeneration, evolutionManager.CurrenGenome + 1);
 	}
 	
 	// Update is called once per frame
 	void Update ()
 	{
-		timer += Time.deltaTime;
-
-
 			for (int i = 0; i < sensorRays.Length; i++)
 			{
 				sensorRays[i].origin = sensors[i].position;
@@ -68,13 +66,9 @@ public class CarController : MonoBehaviour
 
 				RaycastHit hit;
 			
-				if (Physics.Raycast(sensorRays[i], out hit, 2.5f))
+				if (Physics.Raycast(sensorRays[i], out hit))
 				{
 					input[i] = hit.distance;
-				}
-				else
-				{
-					input[i] = 2.5f;
 				}
 			}
 

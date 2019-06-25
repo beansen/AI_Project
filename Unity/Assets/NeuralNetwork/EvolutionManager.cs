@@ -45,7 +45,14 @@ namespace AI.Evolution
 	
 			for (int i = 0; i < population; i++)
 			{
-				currentPopulation.Add(new NeuralNetwork(config));
+				if (config)
+				{
+					currentPopulation.Add(new NeuralNetwork(config));
+				}
+				else
+				{
+					currentPopulation.Add(new NeuralNetwork(activationFunction, bias, topology));
+				}
 			}
 		}
 	
@@ -115,16 +122,13 @@ namespace AI.Evolution
 			}
 		}
 	
-		private void MutateLayer(float[,] layerWeights)
+		private void MutateLayer(float[] layerWeights)
 		{
-			for (int y = 0; y < layerWeights.GetLength(1); y++)
+			for (int i = 0; i < layerWeights.Length; i++)
 			{
-				for (int x = 0; x < layerWeights.GetLength(0); x++)
+				if (Random.Range(0f, 1f) < mutationPossibility)
 				{
-					if (Random.Range(0f, 1f) < mutationPossibility)
-					{
-						layerWeights[x, y] += Random.Range(-mutationRate, mutationRate);
-					}
+					layerWeights[i] += Random.Range(-mutationRate, mutationRate);
 				}
 			}
 		}
