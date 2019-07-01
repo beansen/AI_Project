@@ -9,12 +9,9 @@ public class CarController : MonoBehaviour
 	// Left, right, middle
 	public Transform[] sensors;
 
-	public WheelCollider[] frontWheels;
+	public WheelCollider[] wheels;
 
 	public UiController uiController;
-
-	public float minTorque;
-	public float maxTorque;
 
 	private Ray[] sensorRays;
 	
@@ -28,6 +25,8 @@ public class CarController : MonoBehaviour
 	private Vector3 lastPosition;
 
 	private int distZeroCounter;
+
+	private bool play;
 	
 	// Use this for initialization
 	void Start ()
@@ -46,6 +45,8 @@ public class CarController : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
+		if (play)
+		{
 			for (int i = 0; i < sensorRays.Length; i++)
 			{
 				sensorRays[i].origin = sensors[i].position;
@@ -90,27 +91,35 @@ public class CarController : MonoBehaviour
 					uiController.UpdateMaxDistance(maxDistance);
 				}
 			}
+		}
+
+		if (Input.GetKeyDown(KeyCode.A))
+		{
+			play = true;
+			wheels[0].motorTorque = 30;
+			wheels[1].motorTorque = 30;
+			wheels[2].motorTorque = 30;
+			wheels[3].motorTorque = 30;
+		}
 	}
 
 	private void ApplyOutput(float[] output)
 	{
-		float torque = output[0] * maxTorque;
-		float steering = output[1] * 45;
+		float steering = output[0] * 45;
 
-		frontWheels[0].motorTorque = Mathf.Clamp(torque, minTorque, maxTorque);
-		frontWheels[1].motorTorque = Mathf.Clamp(torque, minTorque, maxTorque);
-
-		frontWheels[0].steerAngle = steering;
-		frontWheels[1].steerAngle = steering;
+		wheels[0].steerAngle = steering;
+		wheels[1].steerAngle = steering;
 	}
 
 	private void ResetCar()
 	{
 		evolutionManager.NextNetwork(distanceTraveled);
-		frontWheels[0].motorTorque = 0;
-		frontWheels[1].motorTorque = 0;
-		frontWheels[0].steerAngle = 0;
-		frontWheels[1].steerAngle = 0;
+		wheels[0].brakeTorque = 100;
+		wheels[1].brakeTorque = 100;
+		wheels[2].brakeTorque = 100;
+		wheels[3].brakeTorque = 100;
+		wheels[0].steerAngle = 0;
+		wheels[1].steerAngle = 0;
 
 		transform.position = startingPosition;
 		transform.rotation = Quaternion.Euler(0, 0, 0);
@@ -118,6 +127,11 @@ public class CarController : MonoBehaviour
 		lastPosition = transform.position;
 		uiController.UpdateNetworkText(evolutionManager.CurrenGeneration, evolutionManager.CurrenGenome + 1);
 		distZeroCounter = 0;
+		
+		wheels[0].brakeTorque = 0;
+		wheels[1].brakeTorque = 0;
+		wheels[2].brakeTorque = 0;
+		wheels[3].brakeTorque = 0;
 	}
 
 	private bool HasCrashed()

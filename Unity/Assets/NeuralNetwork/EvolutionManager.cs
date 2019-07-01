@@ -81,6 +81,7 @@ namespace AI.Evolution
 			
 			BreedNewGeneration();
 			MutateNewGeneration();
+			generationCounter++;
 		}
 	
 		private void BreedNewGeneration()
@@ -99,9 +100,18 @@ namespace AI.Evolution
 	
 		private NeuralNetwork BreedNewNetwork(NeuralNetwork parentOne, NeuralNetwork parentTwo)
 		{
-			NeuralNetwork child = new NeuralNetwork(activationFunction, bias, topology);
+			NeuralNetwork child;
+
+			if (config)
+			{
+				child = new NeuralNetwork(config);
+			}
+			else
+			{
+				child = new NeuralNetwork(activationFunction, bias, topology);
+			}
 	
-			for (int i = 1; i < topology.Length; i++)
+			for (int i = 1; i < child.Layers.Length; i++)
 			{
 				child.Layers[i].Weights = Random.Range(0, 2) == 0 ? parentOne.Layers[i].Weights : parentTwo.Layers[i].Weights;
 			}
